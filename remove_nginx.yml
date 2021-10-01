@@ -1,0 +1,33 @@
+---
+
+- hosts: all
+  become: true
+  tasks:
+
+  - name: update package cache
+    yum:
+      update_cache=true
+
+  - name: install extra packages for enterprise linux
+    yum:
+      name: epel-release
+      state: absent
+
+  - name: update epel-release cache
+    yum:
+      update_cache=true
+
+  - name: install nginx package
+    yum:
+      name: nginx
+      state: absent
+
+  - name: install htop package
+    yum:
+      name: htop
+      state: absent
+
+  - name: install tldr package
+    yum:
+      name: tldr
+      state: absent

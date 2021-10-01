@@ -1,2 +1,3 @@
 # ansible
-A repo for learning ansible in the hopes of one day being a linux admin.
+Genesis
+Just learning Ansible in the hopes of becoming a full time linux admin.
