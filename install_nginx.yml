@@ -4,23 +4,23 @@
   become: true
   tasks:
 
-  - name: remove extra packages for enterprise linux
+  - name: install extra packages for enterprise linux
     yum:
       name: epel-release
-      state: absent
+      state: latest
     when: ansible_os_family == "Rocky"
 
-  - name: update yum cache
+  - name: update epel-release cache
     yum:
       update_cache=true
     when: ansible_os_family == "Rocky"
 
-  - name: remove nginx, tldr and htop packages
+  - name: install nginx, tldr and htop packages
     yum:
       name:
         - nginx
         - htop
         - tldr
-      state: absent 
+      state: latest 
     when: ansible_os_family == "Rocky"
 
