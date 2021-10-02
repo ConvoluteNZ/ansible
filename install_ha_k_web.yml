@@ -16,7 +16,7 @@
       update_cache=true
     when: ansible_os_family == "Rocky"
 
-  - name: install nginx, tldr and htop packages
+  - name: install ncdu, tldr and htop packages
     package:
       name:
         - htop
@@ -29,11 +29,11 @@
   tasks:
 
   - name: install keepalived and haproxy on [keepalive_haproxy] servers
-      package:
-        name:
-          - keepalived
-          - haproxy
-        state: latest
+    package:
+      name:
+        - keepalived
+        - haproxy
+      state: latest
 
 - hosts: web_servers
   become: true
@@ -43,4 +43,4 @@
     package:
       name:
         - nginx
-    state: latest
+      state: latest
