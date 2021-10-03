@@ -4,66 +4,65 @@
   become: true
   tasks:
 
-  - name: install extra packages for enterprise linux
-    package:
-      name:
-        - epel-release
-      state: latest
-    when: ansible_os_family == "Rocky"
+    - name: install extra packages for enterprise linux
+      package:
+        name:
+          - epel-release
+        state: present
+      when: ansible_os_family == "Rocky"
 
-  - name: update epel-release cache
-    package:
-      update_cache=true
-    when: ansible_os_family == "Rocky"
+    - name: update epel-release cache
+      package:
+        update_cache=true
+      when: ansible_os_family == "Rocky"
 
-  - name: install ncdu, tldr and htop packages
-    package:
-      name:
-        - htop
-        - tldr
-        - ncdu
-      state: latest 
-    when: ansible_os_family == "Rocky"
+    - name: install ncdu, tldr and htop packages
+      package:
+        name:
+          - htop
+          - tldr
+          - ncdu
+        state: present
+      when: ansible_os_family == "Rocky"
 
-  - name: setup general firewall allow rules
-    ansible.posix.firewalld:
-      zone: public
-      service: "{{ item }}}"
-      permanent: yes
-      immediate: yes
-      state: disabled
-    with_items:
-      - http
-      - https
-    
+    - name: setup general firewall allow rules
+      firewalld:
+        permanent: true
+        immediate: true
+        zone: public
+        service: "{{ item  }}"
+        state: enabled
+      with_items:
+        - http
+        - https
+
 - hosts: keepalive_haproxy
   become: true
   tasks:
 
-  - name: install keepalived and haproxy on [keepalive_haproxy] servers
-    package:
-      name:
-        - keepalived
-        - haproxy
-      state: latest
+    - name: install keepalived and haproxy on [keepalive_haproxy] servers
+      package:
+        name:
+          - keepalived
+          - haproxy
+        state: present
 
-  - name: setup keepalive/haproxy specific firewall allow rules
-    ansible.posix.firewalld:
-      zone: public
-      rich_rule: "{{ item }}"
-      permanent: yes
-      immediate: yes
-      state: enabled
-    with_items:
-      - rule family="ipv4" source address="224.0.0.18" accept
-      - rule family="ipv4" destination address="224.0.0.18" accept
+    - name: setup keepalive/haproxy specific firewall allow rules
+      firewalld:
+        permanent: true
+        immediate: true
+        zone: public
+        rich_rule: "{{ item }}"
+        state: enabled
+      with_items:
+        - rule family="ipv4" source address="224.0.0.18" accept
+        - rule family="ipv4" destination address="224.0.0.18" accept
 
 - hosts: web_servers
   become: true
   tasks:
 
-  - name: install nginx on [web_servers]
-    package:
-      name:
-        - nginx
-      state: latest
+    - name: install nginx on [web_servers]
+      package:
+        name: nginx
+        state: present

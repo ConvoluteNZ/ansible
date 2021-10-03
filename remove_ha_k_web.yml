@@ -1,70 +1,69 @@
 ---
-    
+
 - hosts: keepalive_haproxy
   become: true
   tasks:
 
-  - name: remove keepalived and haproxy on [keepalive_haproxy] servers
-    package:
-      name:
-        - keepalived
-        - haproxy
-      state: absent
+    - name: remove keepalived and haproxy on [keepalive_haproxy] servers
+      package:
+        name:
+          - keepalived
+          - haproxy
+        state: absent
 
-  - name: remove keepalive/haproxy specific firewall allow rules
-    ansible.posix.firewalld:
-      zone: public
-      rich_rule: "{{ item }}"
-      permanent: yes
-      immediate: yes
-      state: disabled
-    with_items:
-      - rule family="ipv4" source address="224.0.0.18" accept
-      - rule family="ipv4" destination address="224.0.0.18" accept
+    - name: remove keepalive/haproxy specific firewall allow rules
+      firewalld:
+        zone: public
+        rich_rule: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: disabled
+      with_items:
+        - rule family="ipv4" source address="224.0.0.18" accept
+        - rule family="ipv4" destination address="224.0.0.18" accept
 
 - hosts: web_servers
   become: true
   tasks:
 
-  - name: remove nginx on [web_servers]
-    package:
-      name:
-        - nginx
-      state: absent
+    - name: remove nginx on [web_servers]
+      package:
+        name:
+          - nginx
+        state: absent
 
 - hosts: all
   become: true
   tasks:
 
-  - name: remove ncdu, tldr and htop packages
-    package:
-      name:
-        - htop
-        - tldr
-        - ncdu
-      state: absent 
-    when: ansible_os_family == "Rocky"
+    - name: remove ncdu, tldr and htop packages
+      package:
+        name:
+          - htop
+          - tldr
+          - ncdu
+        state: absent
+      when: ansible_os_family == "Rocky"
 
-  - name: remove general firewall allow rules
-    ansible.posix.firewalld:
-      zone: public
-      service: "{{ item }}}"
-      permanent: yes
-      immediate: yes
-      state: disabled
-    with_items:
-      - http
-      - https
+    - name: remove general firewall allow rules
+      firewalld:
+        zone: public
+        service: "{{ item }}}"
+        permanent: true
+        immediate: true
+        state: disabled
+      with_items:
+        - http
+        - https
 
-  - name: remove extra packages for enterprise linux
-    package:
-      name:
-        - epel-release
-      state: absent
-    when: ansible_os_family == "Rocky"
+    - name: remove extra packages for enterprise linux
+      package:
+        name:
+          - epel-release
+        state: absent
+      when: ansible_os_family == "Rocky"
 
-  - name: update epel-release cache
-    package:
-      update_cache=true
-    when: ansible_os_family == "Rocky"
-    
+    - name: update epel-release cache
+      package:
+        update_cache=true
+      when: ansible_os_family == "Rocky"
