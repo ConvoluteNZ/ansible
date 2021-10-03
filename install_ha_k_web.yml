@@ -21,9 +21,21 @@
       name:
         - htop
         - tldr
+        - ncdu
       state: latest 
     when: ansible_os_family == "Rocky"
 
+  - name: setup general firewall allow rules
+    ansible.posix.firewalld:
+      zone: public
+      service: "{{ item }}}"
+      permanent: yes
+      immediate: yes
+      state: disabled
+    with_items:
+      - http
+      - https
+    
 - hosts: keepalive_haproxy
   become: true
   tasks:
@@ -34,6 +46,17 @@
         - keepalived
         - haproxy
       state: latest
+
+  - name: setup keepalive/haproxy specific firewall allow rules
+    ansible.posix.firewalld:
+      zone: public
+      rich_rule: "{{ item }}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+    with_items:
+      - rule family="ipv4" source address="224.0.0.18" accept
+      - rule family="ipv4" destination address="224.0.0.18" accept
 
 - hosts: web_servers
   become: true
